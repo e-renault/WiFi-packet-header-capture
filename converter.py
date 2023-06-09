@@ -21,7 +21,6 @@ def extract_metadata(filename):
             coord = line.find(keyword_location)
             if coord != -1:
                 c = re.findall(r'\b\d+\b', line)
-                print(c)
                 x, y, z = (c[1], c[2], c[3])
 
 def extract_clean_dataset(filename):
@@ -40,17 +39,18 @@ def extract_clean_dataset(filename):
 def convert_dataset(df):
     global x,y,z
     agg = df.groupby('BSSID').aggregate({
-        'dB_mean': 'mean',
-        'measure_count': 'sum',
-        'antenna_index': 'unique', 
-        'channel': 'unique', 
-        'TSFT': 'unique',
-        'flags': 'unique', 
-        'data_rate': 'unique', 
-        'rx_flag': 'unique', 
-        'timestamp': 'median',
-        'mcs': 'unique',
-        'ampdu_status': 'unique',
+        #'SSID': 'unique',
+        'RSSI': 'mean',
+        #'COUNT': 'sum',
+        #'antenna_index': 'unique', 
+        #'channel': 'unique', 
+        #'TSFT': 'unique',
+        #'flags': 'unique', 
+        #'data_rate': 'unique', 
+        #'rx_flag': 'unique', 
+        #'timestamp': 'median',
+        #'mcs': 'unique',
+        #'ampdu_status': 'unique',
     })
 
     agg['x'] = x
@@ -58,7 +58,8 @@ def convert_dataset(df):
     agg['z'] = z
 
     return agg
-    
+
+
 def main():
     argc = len(sys.argv)
     if argc < 2:
@@ -68,12 +69,10 @@ def main():
     for filename in sys.argv[1:]:
         extract_metadata(filename)
         df = extract_clean_dataset(filename)
-        agg = convert_dataset(df)
+        agg = convert_dataset(df).sort_values(by='RSSI')
+        print(agg)
+        #agg.to_csv(filename+'.out.csv')
 
-        agg = agg.sort_values(by=['dB_mean'], ascending=False)
-        print(agg.head(40))
-        agg.plot(kind = 'bar', y = 'dB_mean')
-        plt.show()
 
 if __name__ == "__main__":
     main()
