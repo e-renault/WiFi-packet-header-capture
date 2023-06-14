@@ -1,5 +1,7 @@
 *.out
 old/
+data/
 radiotap-library
 iwconfig.txt
 .*
+*.csv

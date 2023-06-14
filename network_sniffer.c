@@ -65,6 +65,8 @@ void my_callback(char *user, const struct pcap_pkthdr* pkthdr, const unsigned ch
 
     // get source informations
     char ssid[32] = "Empty";
+    char SA[18];
+    char DA[18];
     char BSSID[18];
     int dbm_antsignal_sum = 0; //RSSI
     int measure_count = 0;
@@ -89,7 +91,9 @@ void my_callback(char *user, const struct pcap_pkthdr* pkthdr, const unsigned ch
 
 
     // get readable mac address
-    sprintf(BSSID, "%02X:%02X:%02X:%02X:%02X:%02X", wifi_hdr->address2[0], wifi_hdr->address2[1], wifi_hdr->address2[2], wifi_hdr->address2[3], wifi_hdr->address2[4], wifi_hdr->address2[5]);
+    sprintf(BSSID, "%02X:%02X:%02X:%02X:%02X:%02X", wifi_hdr->address1[0], wifi_hdr->address1[1], wifi_hdr->address1[2], wifi_hdr->address1[3], wifi_hdr->address1[4], wifi_hdr->address1[5]);
+    sprintf(SA, "%02X:%02X:%02X:%02X:%02X:%02X", wifi_hdr->address2[0], wifi_hdr->address2[1], wifi_hdr->address2[2], wifi_hdr->address2[3], wifi_hdr->address2[4], wifi_hdr->address2[5]);
+    sprintf(DA, "%02X:%02X:%02X:%02X:%02X:%02X", wifi_hdr->address3[0], wifi_hdr->address3[1], wifi_hdr->address3[2], wifi_hdr->address3[3], wifi_hdr->address3[4], wifi_hdr->address3[5]);
 
     /**
     while (ieee80211_radiotap_iterator_next(&iter)==0) {
@@ -149,8 +153,10 @@ void my_callback(char *user, const struct pcap_pkthdr* pkthdr, const unsigned ch
     }
     if (measure_count == 0) return;//empty/invalid iterator
     
-    printf("%s,%i,%i,%u,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n", 
+    printf("%s,%s,%s,%i,%i,%u,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n", 
     BSSID, 
+    SA,
+    DA,
     dbm_antsignal_sum/measure_count, 
     measure_count, 
     antenna_index, 
@@ -183,7 +189,7 @@ int main(int argc, char **argv) {
     printf("Device:,%s\n",dev);
 
     printf("=== Transmission ===\n");
-    printf("SSID,BSSID,RSSI,COUNT,antenna_index,channel,TSFT,flags,data_rate,rx_flag,timestamp,mcs,ampdu_status\n");
+    printf("SSID,BSSID,SA,DA,RSSI,COUNT,antenna_index,channel,TSFT,flags,data_rate,rx_flag,timestamp,mcs,ampdu_status\n");
 
     descr = pcap_open_live(dev,BUFSIZ,0,-1,errbuf);
     if(descr == NULL) {
