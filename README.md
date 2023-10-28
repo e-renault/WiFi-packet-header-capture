@@ -8,7 +8,8 @@ This git contains tools to extract, store, parse and preprocess wifi signals to 
 ### Prerequise
 In order to use thoses scripts, you should have to get:
  - A wifi card that allow wifi monitoring
- - the libradiotap library, see instructions : (github)[https://github.com/radiotap/radiotap-library]
+ - the libradiotap library, see instructions : (github)[https://github.com/radiotap/radiotap-library] or `git submodule update --init`
+
  - (optional) airmon-ng, if wifi start.sh isn't sufficient to enable monitor mode) (see: (airmon-ng)[https://www.aircrack-ng.org/doku.php?id=airmon-ng]
 
 ### How to compile
