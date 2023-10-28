@@ -1,21 +1,24 @@
-# wifi_positionning
+# Positionnement_WiFi
+
+
+## Data extraction
 This git contains tools to extract, store, parse and preprocess wifi signals to get RSSI values from a specified position.
 
 
-## Prerequise
+### Prerequise
 In order to use thoses scripts, you should have to get:
  - A wifi card that allow wifi monitoring
  - the libradiotap library, see instructions : (github)[https://github.com/radiotap/radiotap-library]
  - (optional) airmon-ng, if wifi start.sh isn't sufficient to enable monitor mode) (see: (airmon-ng)[https://www.aircrack-ng.org/doku.php?id=airmon-ng]
 
-## How to compile
+### How to compile
 You must compile including the radiotap-library AND add -lradiotap flag.
 
 `gcc network_sniffer.c -I radiotap-library -lradiotap -lpcap`
 
 radiotape-library folder should be at the root of the project folder (same as network_sniffer.c)
 
-## Execute
+### Execute
 First enable monitor mode:
 `sudo ./start.sh`
 
@@ -26,7 +29,7 @@ Then start scrapping:
 Recover to monitored mode (normal default mode):
 `sudo ./stop.sh`
 
-## Parse data
+### Parse data
 This is a basic script to extract and reduce datas
 `Python3 converter.py file1 file2 ...`
 

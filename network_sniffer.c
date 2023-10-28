@@ -5,7 +5,7 @@
 * Location: Chicoutimi CANADA
 *
 * RSSI capture program
-* compile : gcc network_sniffer.c -I radiotap-library -lradiotap -lpcap
+* compile : gcc network_sniffer.c -I radiotap-library -lradiotap -lpcap -DNB_FRAME=10
 * run : sudo ./a.out "xyz: 0 0 0"| tee data/000.csv
 *****************************************************/
 #include <pcap.h>
@@ -38,6 +38,9 @@ struct ieee80211_field {
   uint8_t length;
   char ssid[32]; // Maximum SSID length
 } __attribute__((__packed__));
+
+int x=-1,y=-1,z=-1;
+FILE* mfile;
 
 //callback called for each new transmission
 void my_callback(char *user, const struct pcap_pkthdr* pkthdr, const unsigned char* packet) {
@@ -87,7 +90,6 @@ void my_callback(char *user, const struct pcap_pkthdr* pkthdr, const unsigned ch
         memcpy(ssid, ssid_header->ssid, ssid_header->length);
         ssid[ssid_header->length] = '\0';
     }
-    printf("%s,", ssid);
 
 
     // get readable mac address
@@ -153,23 +155,32 @@ void my_callback(char *user, const struct pcap_pkthdr* pkthdr, const unsigned ch
     }
     if (measure_count == 0) return;//empty/invalid iterator
     
-    printf("%s,%s,%s,%i,%i,%u,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n", 
-    BSSID, 
-    SA,
-    DA,
-    dbm_antsignal_sum/measure_count, 
-    measure_count, 
-    antenna_index, 
-    channel, 
-    tsft, 
-    flags, 
-    data_rate, 
-    rx_flag, 
-    timestamp, 
-    mcs, 
-    ampdu_status);
-}
 
+   char str[1000];
+   sprintf(str, "%i,%i,%i,%s,%s,%s,%s,%i,%i,%u,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n", 
+        x,
+        y,
+        z,
+        ssid,
+        BSSID, 
+        SA,
+        DA,
+        dbm_antsignal_sum/measure_count, 
+        measure_count, 
+        antenna_index, 
+        channel, 
+        tsft, 
+        flags, 
+        data_rate, 
+        rx_flag, 
+        timestamp, 
+        mcs, 
+        ampdu_status);
+    printf("%s", str);
+    fprintf(mfile, "%s", str);
+
+
+}
 
 int main(int argc, char **argv) {
     char* dev;
@@ -177,7 +188,12 @@ int main(int argc, char **argv) {
     pcap_t* descr;
     pcap_if_t* alldevs;
     
-
+    if (argc>=3) {
+        x = atoi(*(argv + 1));
+        y = atoi(*(argv + 2));
+        if (argc>=4)
+            z = atoi(*(argv + 3));
+    }
     for(argc; argc--;) {
         printf("%i,%s\n",argc, *(argv+argc));
     }
@@ -189,7 +205,7 @@ int main(int argc, char **argv) {
     printf("Device:,%s\n",dev);
 
     printf("=== Transmission ===\n");
-    printf("SSID,BSSID,SA,DA,RSSI,COUNT,antenna_index,channel,TSFT,flags,data_rate,rx_flag,timestamp,mcs,ampdu_status\n");
+    printf("x,y,z,SSID,BSSID,SA,DA,RSSI,COUNT,antenna_index,channel,TSFT,flags,data_rate,rx_flag,timestamp,mcs,ampdu_status\n");
 
     descr = pcap_open_live(dev,BUFSIZ,0,-1,errbuf);
     if(descr == NULL) {
@@ -197,6 +213,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
+    mfile = fopen("out.csv", "a");
 
     pcap_loop(descr,NB_FRAME,my_callback,NULL);
 
