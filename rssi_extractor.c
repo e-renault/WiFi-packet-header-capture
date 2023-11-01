@@ -5,7 +5,7 @@
 * Location: Chicoutimi CANADA
 *
 * RSSI capture program
-* compile : gcc network_sniffer.c -I radiotap-library -lradiotap -lpcap -DNB_FRAME=10
+* compile : gcc rssi_extractor.c -I radiotap-library -lradiotap -lpcap -DNB_FRAME=10
 * run : sudo ./a.out 1 2 3
 *****************************************************/
 #include <pcap.h>

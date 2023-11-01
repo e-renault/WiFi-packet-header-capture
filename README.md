@@ -26,7 +26,7 @@ sudo ldconfig
 ### How to compile
 You must compile including the radiotap-library AND add -lradiotap flag.
 
-`gcc network_sniffer.c -I radiotap-library -lradiotap -lpcap -DNB_FRAME=10`
+`gcc rssi_extractor.c -I radiotap-library -lradiotap -lpcap -DNB_FRAME=500 -o rssi_extractor`
 
 radiotape-library folder should be at the root of the project folder (same as network_sniffer.c)
 
@@ -35,7 +35,7 @@ First enable monitor mode:
 `sudo ./start.sh`
 
 Then start scrapping:
-`sudo ./a.out 1 2 3`
+`sudo ./rssi_extractor 1 2 3`
 "xyz: 0 0 0": replace with you own coordinates. tee data/000.csv is for saving data to file, and can be changed
 
 Recover to monitored mode (normal default mode):
